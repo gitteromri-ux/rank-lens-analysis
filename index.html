@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rep Rank Optimization — SOV Sweet Spot Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&f[]=satoshi@400,500,700,900&f[]=jetbrains-mono@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+</head>
+<body>
+
+<div class="app">
+
+  <header class="header">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" aria-label="Rank Lens" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="20" cy="20" r="18"/>
+        <path d="M8 20 L20 8 L32 20 L20 32 Z" />
+        <circle cx="20" cy="20" r="5" fill="currentColor" stroke="none"/>
+      </svg>
+      <div class="brand-text">
+        <div class="brand-name">Rank Lens</div>
+        <div class="brand-sub">SOV Sweet-Spot Analysis</div>
+      </div>
+    </div>
+    <div class="meta">
+      <span id="metaRange">—</span>
+      <span class="dot"></span>
+      <span id="metaWeeks">—</span>
+      <span class="dot"></span>
+      <span id="metaReps">—</span>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-label">Executive Summary</div>
+      <h1 class="hero-title">Where does the call center perform best?</h1>
+      <p class="hero-lede">
+        We analyzed every rep-week across the two core schools — Hebrew Related and Biblical Related —
+        pairing each rep's category rank (top performers = 3–4) with the call-center's weighted SOV.
+        The answer is counterintuitive: more rank 3–4 is not always better.
+      </p>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="kpi-label">Weeks analyzed</div>
+          <div class="kpi-value" id="kpiWeeks">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Contacted leads</div>
+          <div class="kpi-value" id="kpiContacted">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Schools analyzed</div>
+          <div class="kpi-value" id="kpiCats">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Median SOV</div>
+          <div class="kpi-value" id="kpiSOV">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEGORY TABS + MAIN PANEL -->
+    <section class="panel">
+      <nav class="tabs" id="tabs" role="tablist"></nav>
+
+      <div class="panel-head">
+        <div>
+          <div class="panel-eyebrow">Rank 3–4 Share Optimization</div>
+          <h2 class="panel-title" id="panelTitle">—</h2>
+          <p class="panel-sub" id="panelSub">—</p>
+        </div>
+        <div class="panel-tag" id="panelTag">—</div>
+      </div>
+
+      <!-- Verdict cards -->
+      <div class="verdict-grid">
+        <div class="verdict verdict-good">
+          <div class="verdict-eyebrow">Optimal Range</div>
+          <div class="verdict-value" id="verOptimal">—</div>
+          <div class="verdict-detail" id="verOptimalDetail">—</div>
+        </div>
+        <div class="verdict verdict-bad">
+          <div class="verdict-eyebrow">SOV turns bad</div>
+          <div class="verdict-value" id="verBad">—</div>
+          <div class="verdict-detail" id="verBadDetail">—</div>
+        </div>
+        <div class="verdict verdict-neutral">
+          <div class="verdict-eyebrow">Peak SOV achieved</div>
+          <div class="verdict-value" id="verPeak">—</div>
+          <div class="verdict-detail" id="verPeakDetail">—</div>
+        </div>
+        <div class="verdict verdict-neutral">
+          <div class="verdict-eyebrow">Statistical Signal</div>
+          <div class="verdict-value" id="verStat">—</div>
+          <div class="verdict-detail" id="verStatDetail">—</div>
+        </div>
+      </div>
+
+      <!-- MAIN CHART: scatter + smoothed curve + optimal/bad bands -->
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>SOV response curve</h3>
+          <div class="legend">
+            <span class="lg"><i class="sw sw-opt"></i>Optimal band</span>
+            <span class="lg"><i class="sw sw-bad"></i>Bad region</span>
+            <span class="lg"><i class="sw sw-line"></i>Smoothed SOV</span>
+            <span class="lg"><i class="sw sw-dot"></i>Weekly observation</span>
+          </div>
+        </div>
+        <div class="chart-box">
+          <canvas id="mainChart"></canvas>
+        </div>
+        <div class="chart-note" id="chartNote">—</div>
+      </div>
+
+      <!-- Secondary: time series -->
+      <div class="twin-grid">
+        <div class="chart-wrap">
+          <div class="chart-head">
+            <h3>Weekly progression</h3>
+            <div class="legend">
+              <span class="lg"><i class="sw sw-share"></i>Rank 3–4 share</span>
+              <span class="lg"><i class="sw sw-sov"></i>SOV (10-wk smoothed)</span>
+            </div>
+          </div>
+          <div class="chart-box">
+            <canvas id="tsChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <div class="chart-head">
+            <h3>SOV by share bucket</h3>
+            <div class="legend">
+              <span class="lg"><i class="sw sw-bar"></i>Mean SOV</span>
+            </div>
+          </div>
+          <div class="chart-box">
+            <canvas id="binChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Narrative box -->
+      <div class="insight-box" id="insightBox"></div>
+    </section>
+
+    <!-- COMPARATIVE OVERVIEW -->
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-eyebrow">Cross-School Comparison</div>
+          <h2 class="panel-title">One chart, every school</h2>
+          <p class="panel-sub">How each school's SOV responds to rank 3–4 share — on a single axis.</p>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-box chart-box-tall">
+          <canvas id="compareChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Summary matrix -->
+      <div class="matrix">
+        <div class="matrix-head">
+          <div>School</div>
+          <div>Optimal range</div>
+          <div>SOV turns bad</div>
+          <div>Trend</div>
+          <div>Signal strength</div>
+          <div>Weeks</div>
+        </div>
+        <div id="matrixBody"></div>
+      </div>
+    </section>
+
+    <!-- METHODOLOGY -->
+    <section class="panel panel-method">
+      <div class="panel-head">
+        <div>
+          <div class="panel-eyebrow">Methodology</div>
+          <h2 class="panel-title">How the sweet spot was found</h2>
+        </div>
+      </div>
+      <div class="method-grid">
+        <div class="method-card">
+          <div class="method-num">01</div>
+          <h4>Weekly join</h4>
+          <p>Each rep-category-week in the rank file contains a trailing 10-week volume and a quartile rank (1 = low, 4 = top). We aggregated these to compute the share of contacted handled by rank 3–4 reps in each school per week.</p>
+        </div>
+        <div class="method-card">
+          <div class="method-num">02</div>
+          <h4>SOV alignment</h4>
+          <p>Daily rep-level SOV (weighted by contacted volume) was rolled up to a weekly call-center-wide figure and smoothed on a 10-week trailing window to align with the rank window.</p>
+        </div>
+        <div class="method-card">
+          <div class="method-num">03</div>
+          <h4>Curve fitting</h4>
+          <p>For each school we fit a Gaussian-kernel smoother over the rank-3–4 share × SOV pairs, with a quadratic reference to identify the peak and shape (monotonic vs inverted-U).</p>
+        </div>
+        <div class="method-card">
+          <div class="method-num">04</div>
+          <h4>Sweet spot</h4>
+          <p>Optimal range = smoothed SOV ≥ 97 % of peak. Bad threshold = share values where smoothed SOV drops below the call-center's 25th-percentile SOV (or the mid-point between peak and trough).</p>
+        </div>
+        <div class="method-card">
+          <div class="method-num">05</div>
+          <h4>Significance</h4>
+          <p>Spearman ρ and Pearson r tested two-sided. A "strong" signal = |ρ| > 0.5 with p &lt; 0.01. "Directional" = 0.2 &lt; |ρ| ≤ 0.5. "Weak" = |ρ| ≤ 0.2. Categories with fewer than 10 weeks were excluded.</p>
+        </div>
+        <div class="method-card">
+          <div class="method-num">06</div>
+          <h4>Caveats</h4>
+          <p>The rank share is driven by trailing volume — a 100 % reading often signals that rank 1–2 reps weren't active that week, not that top reps did more. Optimum recommendations should be read as "who is carrying the phone", not pure performance.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div>Rank Lens · SOV Sweet-Spot Analysis</div>
+    <div>Data: Rank-Analysis & Rank-Optimum — rolled up to weekly × school</div>
+  </footer>
+</div>
+
+<script src="./app.js"></script>
+</body>
+</html>
