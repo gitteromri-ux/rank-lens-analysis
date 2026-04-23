@@ -318,6 +318,7 @@ body{
 .sw-bar{ background: var(--ink); }
 .sw-empty{ background: rgba(138, 138, 145, 0.25); border: 1px dashed rgba(138, 138, 145, 0.5); }
 .bin-note-val{ font-family: 'JetBrains Mono', monospace; color: var(--ink); font-weight: 600; }
+.mono{ font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: var(--line-soft); padding: 1px 6px; border-radius: 4px; color: var(--ink); }
 
 .chart-box{
   position: relative;

@@ -1,9 +1,9 @@
 {
-  "total_weeks": 116,
-  "date_range_start": "2024-02-04",
+  "total_weeks": 118,
+  "date_range_start": "2024-01-07",
   "date_range_end": "2026-04-19",
-  "total_contacted": 107288,
+  "total_contacted": 170754,
   "n_categories": 2,
-  "n_reps": 312,
-  "sov_median_overall": 970.4887832354651
+  "n_reps": 115,
+  "sov_median_overall": 1404.9780360305306
 }
