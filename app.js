@@ -142,6 +142,7 @@ function renderCategory(cat){
 
   // Chart note
   document.getElementById("chartNote").textContent = chartNote(cat, d);
+  document.getElementById("binNote").innerHTML = binNote(cat, d);
 
   // Narrative
   document.getElementById("insightBox").innerHTML = buildInsight(cat, d);
@@ -181,6 +182,39 @@ function chartNote(cat, d){
   return `Smoothed curve fit with Gaussian kernel over ${d.n_weeks} weekly observations. ` +
          `Peak smoothed SOV ${fmtNum(d.sov_peak,0)} at rank 3–4 share ${fmtPct(d.optimal_center,1)}. ` +
          `95 % confidence ribbon shown in light grey.`;
+}
+
+/* Narrates what happens BELOW the optimal range — the user's explicit question. */
+function binNote(cat, d){
+  const lo = d.optimal_low;
+  if(lo == null) return `Below-optimal behaviour cannot be characterised for this school.`;
+
+  const below = d.scatter.filter(p => p.x < lo);
+  const withinOrAbove = d.scatter.filter(p => p.x >= lo);
+  const total = d.scatter.length;
+
+  const loPct = fmtPct(lo, 0);
+
+  if(below.length === 0){
+    return `<b>Below ${loPct}:</b> <span class="bin-note-val">0 of ${total} weeks</span>. ` +
+           `The call-centre has never operated below the optimal-low threshold — ` +
+           `so below-range buckets in the histogram are shown empty. The risk here is theoretical: ` +
+           `every observed week sits at or above the optimal floor.`;
+  }
+
+  const meanBelow = below.reduce((a,p)=>a+p.y,0) / below.length;
+  const meanIn = withinOrAbove.length ? withinOrAbove.reduce((a,p)=>a+p.y,0) / withinOrAbove.length : null;
+  const delta = meanIn == null ? null : meanBelow - meanIn;
+  const deltaTxt = delta == null ? "" :
+    ` — that is <b>${delta >= 0 ? "+" : ""}${fmtNum(delta,0)}</b> vs. weeks in or above optimal (${fmtNum(meanIn,0)}).`;
+
+  const direction = delta >= 0
+    ? `Counter-intuitively, below-optimal weeks averaged <i>higher</i> SOV`
+    : `As expected, below-optimal weeks averaged lower SOV`;
+
+  return `<b>Below ${loPct}:</b> <span class="bin-note-val">${below.length} of ${total} weeks</span>, ` +
+         `mean SOV <b>${fmtNum(meanBelow,0)}</b>${deltaTxt} ${direction}. ` +
+         `The sample is thin, so treat the direction as indicative, not conclusive.`;
 }
 
 function buildInsight(cat, d){
@@ -489,46 +523,96 @@ function renderBinChart(cat, d){
   const ctx = document.getElementById("binChart").getContext("2d");
   if(charts.bin) charts.bin.destroy();
 
-  // Always build bins from scatter for consistency across categories.
-  // Adaptive edges based on data spread.
-  const xs = d.scatter.map(p => p.x);
-  const xmin = Math.min(...xs), xmax = Math.max(...xs);
-  // Choose edges that produce 4-7 bins with enough points each
-  let edges;
-  if(xmax - xmin > 0.5){
-    edges = [0, 0.25, 0.5, 0.65, 0.75, 0.85, 0.95, 1.01];
-  } else if(xmax - xmin > 0.3){
-    edges = [0, 0.55, 0.65, 0.75, 0.85, 0.9, 0.95, 1.01];
-  } else {
-    edges = [0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1.01];
-  }
+  // Fixed 5%-wide buckets across the full 50–100% range for a clean histogram.
+  // This makes below-optimal, within-optimal, and above-optimal territory directly comparable.
+  const edges = [0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.001];
   const buckets = [];
   for(let i=0;i<edges.length-1;i++){
     buckets.push({ lo: edges[i], hi: edges[i+1] });
   }
-  let bins = buckets.map(b => {
+
+  // Compute stats for every bucket, keeping empty ones so the axis tells the full story.
+  const bins = buckets.map(b => {
     const pts = d.scatter.filter(p => p.x >= b.lo && p.x < b.hi);
-    return {
-      lo: b.lo, hi: b.hi,
-      n: pts.length,
-      share_center: pts.length ? pts.reduce((a,p)=>a+p.x,0)/pts.length : null,
-      sov_mean: pts.length ? pts.reduce((a,p)=>a+p.y,0)/pts.length : null,
-    };
-  }).filter(b => b.n >= 2);
+    const mean = pts.length ? pts.reduce((a,p)=>a+p.y,0)/pts.length : null;
+    const center = (b.lo + b.hi) / 2;
+    return { lo: b.lo, hi: b.hi, center, n: pts.length, sov_mean: mean };
+  });
 
   const labels = bins.map(b => `${Math.round(b.lo*100)}–${Math.round(b.hi*100)}%`);
   const vals = bins.map(b => b.sov_mean);
   const counts = bins.map(b => b.n);
 
-  // Identify bars inside/outside optimal
+  // Color each bar by region.
   const colors = bins.map(b => {
-    const c = b.share_center;
-    if(c == null) return COLORS.inkSoft;
+    if(b.sov_mean == null) return 'rgba(138, 138, 145, 0.15)';  // unobserved
+    const c = b.center;
     if(d.optimal_low != null && d.optimal_high != null && c >= d.optimal_low && c <= d.optimal_high) return COLORS.good;
     if(d.bad_low_threshold != null && c <= d.bad_low_threshold) return COLORS.bad;
     if(d.bad_high_threshold != null && c >= d.bad_high_threshold) return COLORS.bad;
     return COLORS.ink;
   });
+
+  // Compute y-axis range across observed values
+  const observed = bins.filter(b => b.sov_mean != null).map(b => b.sov_mean);
+  const minObs = Math.min(...observed);
+  const maxObs = Math.max(...observed);
+  const pad = (maxObs - minObs) * 0.15;
+  const yMin = Math.floor((minObs - pad) / 10) * 10;
+  const yMax = Math.ceil((maxObs + pad) / 10) * 10;
+
+  // For empty buckets, draw a short sentinel bar at the floor so below-optimal territory
+  // is VISIBLY present in the chart rather than just blank space.
+  const sentinelHeight = yMin + (yMax - yMin) * 0.06;
+  const valsForDraw = bins.map(b => b.sov_mean == null ? sentinelHeight : b.sov_mean);
+
+  // Build optimal-range band annotation based on bucket edges
+  const optAnnotations = {};
+  if(d.optimal_low != null && d.optimal_high != null){
+    // Find bucket indices that fall within optimal
+    let startIdx = -1, endIdx = -1;
+    bins.forEach((b, i) => {
+      if(b.center >= d.optimal_low && b.center <= d.optimal_high){
+        if(startIdx === -1) startIdx = i;
+        endIdx = i;
+      }
+    });
+    if(startIdx !== -1){
+      optAnnotations.optBand = {
+        type: 'box',
+        xMin: startIdx - 0.5,
+        xMax: endIdx + 0.5,
+        backgroundColor: 'rgba(42, 127, 82, 0.07)',
+        borderColor: 'rgba(42, 127, 82, 0.35)',
+        borderWidth: 1,
+        borderDash: [4,4],
+        label: {
+          display: true,
+          content: 'Optimal',
+          position: 'start',
+          color: COLORS.good,
+          font: { size: 10, weight: '600', family: 'JetBrains Mono' },
+          padding: 4,
+          backgroundColor: 'transparent',
+          yAdjust: -4
+        }
+      };
+    }
+  }
+  optAnnotations.median = {
+    type: 'line',
+    yMin: d.sov_median, yMax: d.sov_median,
+    borderColor: COLORS.inkSoft, borderWidth: 1, borderDash: [3,3],
+    label: {
+      display: true,
+      content: `Median SOV ${fmtNum(d.sov_median,0)}`,
+      position: 'end',
+      color: COLORS.inkSoft,
+      backgroundColor: 'rgba(255,255,255,0.9)',
+      font: { size: 10, family: 'JetBrains Mono' },
+      padding: { x: 6, y: 3 }
+    }
+  };
 
   charts.bin = new Chart(ctx, {
     type: 'bar',
@@ -536,7 +620,7 @@ function renderBinChart(cat, d){
       labels,
       datasets: [{
         label: 'Mean SOV',
-        data: vals,
+        data: valsForDraw,
         backgroundColor: colors,
         borderRadius: 6,
         borderSkipped: false,
@@ -547,6 +631,7 @@ function renderBinChart(cat, d){
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: { top: 24 } },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -555,30 +640,29 @@ function renderBinChart(cat, d){
           bodyColor: 'white',
           padding: 12,
           callbacks: {
-            label: (ctx) => [
-              `Mean SOV: ${fmtNum(ctx.parsed.y,0)}`,
-              `n = ${counts[ctx.dataIndex]} weeks`
-            ]
-          }
-        },
-        annotation: {
-          annotations: {
-            median: {
-              type: 'line',
-              yMin: d.sov_median, yMax: d.sov_median,
-              borderColor: COLORS.inkSoft, borderWidth: 1, borderDash: [3,3]
+            title: (items) => `Rank 3–4 share ${items[0].label}`,
+            label: (ctx) => {
+              const n = counts[ctx.dataIndex];
+              if(n === 0) return 'No weeks observed in this range';
+              return [
+                `Mean SOV: ${fmtNum(ctx.parsed.y,0)}`,
+                `n = ${n} weeks`
+              ];
             }
           }
-        }
+        },
+        annotation: { annotations: optAnnotations }
       },
       scales: {
         x: {
-          ticks: { color: COLORS.inkMuted },
+          ticks: { color: COLORS.inkMuted, font: { size: 11 } },
           grid: { display: false }
         },
         y: {
           beginAtZero: false,
-          title: { display: true, text: 'Mean SOV', color: COLORS.inkMuted, font: { size: 11 } },
+          min: yMin,
+          max: yMax,
+          title: { display: true, text: 'Mean SOV per bucket', color: COLORS.inkMuted, font: { size: 11 } },
           ticks: { color: COLORS.inkMuted },
           grid: { color: COLORS.lineSoft, drawBorder: false }
         }

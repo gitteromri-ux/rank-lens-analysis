@@ -316,6 +316,8 @@ body{
 .sw-share{ background: var(--neutral); height: 2px; }
 .sw-sov{ background: var(--amber); height: 2px; }
 .sw-bar{ background: var(--ink); }
+.sw-empty{ background: rgba(138, 138, 145, 0.25); border: 1px dashed rgba(138, 138, 145, 0.5); }
+.bin-note-val{ font-family: 'JetBrains Mono', monospace; color: var(--ink); font-weight: 600; }
 
 .chart-box{
   position: relative;
