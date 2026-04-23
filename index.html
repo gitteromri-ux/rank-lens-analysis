@@ -153,6 +153,21 @@
         </div>
       </div>
 
+      <!-- Daily scatter — every day as a point -->
+      <div class="chart-wrap chart-wrap-full">
+        <div class="chart-head">
+          <h3>Daily SOV vs. rank 3–4 share</h3>
+          <div class="legend">
+            <span class="lg"><i class="sw sw-dot-day"></i>One trading day</span>
+            <span class="lg"><i class="sw sw-share"></i>Local trend (LOWESS)</span>
+          </div>
+        </div>
+        <div class="chart-box chart-box-tall">
+          <canvas id="dailyScatter"></canvas>
+        </div>
+        <div class="chart-note" id="dailyNote">—</div>
+      </div>
+
       <!-- Narrative box -->
       <div class="insight-box" id="insightBox"></div>
     </section>

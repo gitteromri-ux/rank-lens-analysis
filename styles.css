@@ -319,6 +319,8 @@ body{
 .sw-empty{ background: rgba(138, 138, 145, 0.25); border: 1px dashed rgba(138, 138, 145, 0.5); }
 .bin-note-val{ font-family: 'JetBrains Mono', monospace; color: var(--ink); font-weight: 600; }
 .mono{ font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: var(--line-soft); padding: 1px 6px; border-radius: 4px; color: var(--ink); }
+.sw-dot-day{ width: 8px !important; height: 8px !important; border-radius: 50%; background: rgba(45, 98, 196, 0.5); }
+.chart-wrap-full{ margin-top: 28px; }
 
 .chart-box{
   position: relative;

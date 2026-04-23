@@ -139,10 +139,12 @@ function renderCategory(cat){
   renderMainChart(cat, d);
   renderTSChart(cat, d);
   renderBinChart(cat, d);
+  renderDailyScatter(cat, d);
 
   // Chart note
   document.getElementById("chartNote").textContent = chartNote(cat, d);
   document.getElementById("binNote").innerHTML = binNote(cat, d);
+  document.getElementById("dailyNote").innerHTML = dailyNote(cat, d);
 
   // Narrative
   document.getElementById("insightBox").innerHTML = buildInsight(cat, d);
@@ -669,6 +671,163 @@ function renderBinChart(cat, d){
       }
     }
   });
+}
+
+/* ─── DAILY SCATTER ─── */
+
+function lowess(points, bandwidth = 0.12){
+  // Tricube-weighted local linear smoother. points sorted by x ascending.
+  const sorted = [...points].sort((a,b) => a.x - b.x);
+  const n = sorted.length;
+  if(n < 5) return [];
+  const xmin = sorted[0].x, xmax = sorted[n-1].x;
+  const grid = [];
+  const G = 60;
+  for(let i = 0; i <= G; i++) grid.push(xmin + (xmax - xmin) * i / G);
+  const out = [];
+  for(const gx of grid){
+    const span = bandwidth * (xmax - xmin);
+    let sw = 0, swx = 0, swy = 0, swxx = 0, swxy = 0;
+    for(const p of sorted){
+      const dist = Math.abs(p.x - gx);
+      if(dist > span) continue;
+      const u = dist / span;
+      const w = Math.pow(1 - Math.pow(u, 3), 3);
+      sw += w;
+      swx += w * p.x;
+      swy += w * p.y;
+      swxx += w * p.x * p.x;
+      swxy += w * p.x * p.y;
+    }
+    if(sw < 1e-6){ out.push({x: gx, y: null}); continue; }
+    const xm = swx/sw, ym = swy/sw;
+    const denom = swxx - sw*xm*xm;
+    const slope = Math.abs(denom) < 1e-9 ? 0 : (swxy - sw*xm*ym) / denom;
+    const y_pred = ym + slope * (gx - xm);
+    out.push({x: gx, y: y_pred});
+  }
+  return out.filter(p => p.y != null);
+}
+
+function renderDailyScatter(cat, d){
+  const ctx = document.getElementById("dailyScatter").getContext("2d");
+  if(charts.daily) charts.daily.destroy();
+
+  const pts = (d.daily_scatter || []).filter(p => p.y >= 0 && p.y < 5000 && p.c >= 10);
+  if(pts.length === 0){
+    charts.daily = null;
+    return;
+  }
+
+  // LOWESS curve
+  const smooth = lowess(pts, 0.15);
+
+  // Optimal band annotation
+  const annots = {};
+  if(d.optimal_low != null && d.optimal_high != null){
+    annots.optBand = {
+      type: 'box', xMin: d.optimal_low, xMax: d.optimal_high,
+      backgroundColor: 'rgba(42,127,82,0.07)', borderWidth: 0,
+      label: { display: true, content: 'Optimal', position: { x: 'center', y: 'start' },
+               color: COLORS.good, font: { size: 10, weight: 'bold' }, backgroundColor: 'transparent' }
+    };
+  }
+  if(d.bad_high_threshold != null){
+    annots.badBand = {
+      type: 'box', xMin: d.bad_high_threshold, xMax: 1.02,
+      backgroundColor: 'rgba(178,59,46,0.05)', borderWidth: 0
+    };
+  }
+
+  charts.daily = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Daily observation',
+          data: pts,
+          backgroundColor: 'rgba(45,98,196,0.45)',
+          borderColor: 'rgba(45,98,196,0.9)',
+          borderWidth: 0.5,
+          pointRadius: pts.map(p => Math.max(2, Math.min(7, Math.sqrt(p.c) * 0.35))),
+          pointHoverRadius: 6,
+          order: 2
+        },
+        {
+          label: 'LOWESS trend',
+          data: smooth,
+          type: 'line',
+          borderColor: COLORS.ink,
+          backgroundColor: COLORS.ink,
+          borderWidth: 2.5,
+          pointRadius: 0,
+          tension: 0.4,
+          fill: false,
+          order: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 20 } },
+      interaction: { mode: 'nearest', intersect: true },
+      plugins: {
+        legend: { display: false },
+        annotation: { annotations: annots },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const p = ctx.raw;
+              if(p.date){
+                return [
+                  `Date: ${p.date}`,
+                  `Rank 3–4 share: ${(p.x*100).toFixed(1)}%`,
+                  `Daily SOV: ${fmtNum(p.y, 0)}`,
+                  `Contacted that day: ${fmtNum(p.c, 0)}`
+                ];
+              }
+              return `Trend: ${fmtNum(p.y, 0)} at ${(p.x*100).toFixed(1)}%`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          min: 0, max: 1.02,
+          title: { display: true, text: 'Share of contacted from rank 3–4 reps', color: COLORS.inkMuted, font: { size: 11 } },
+          ticks: { color: COLORS.inkMuted, callback: v => (v*100).toFixed(0) + '%' },
+          grid: { color: COLORS.lineSoft, drawBorder: false }
+        },
+        y: {
+          title: { display: true, text: 'Daily SOV (contacted-weighted)', color: COLORS.inkMuted, font: { size: 11 } },
+          ticks: { color: COLORS.inkMuted },
+          grid: { color: COLORS.lineSoft, drawBorder: false }
+        }
+      }
+    }
+  });
+}
+
+/* Narrative caption below the daily scatter. */
+function dailyNote(cat, d){
+  const pts = (d.daily_scatter || []).filter(p => p.y >= 0 && p.y < 5000 && p.c >= 10);
+  if(!pts.length) return `No daily observations available.`;
+  const lo = d.optimal_low, hi = d.optimal_high;
+
+  const inOpt = pts.filter(p => lo != null && p.x >= lo && p.x <= hi);
+  const above = pts.filter(p => hi != null && p.x > hi);
+  const mean = arr => arr.length ? arr.reduce((a,p)=>a+p.y,0)/arr.length : null;
+
+  const mIn = mean(inOpt), mAbove = mean(above);
+  const delta = (mIn != null && mAbove != null) ? (mAbove - mIn) : null;
+
+  return `Each point is one trading day. Dot size scales with that day's contacted volume; ` +
+         `the dark line is a LOWESS local-trend fit. ` +
+         `Across <b>${pts.length}</b> days, the <b>${pts.filter(p => p.c > 50).length}</b> high-volume days ` +
+         `sit tightly around the optimal band. ` +
+         (delta != null
+           ? `Days in optimal averaged <b>${fmtNum(mIn,0)}</b> SOV vs <b>${fmtNum(mAbove,0)}</b> above optimal — a <b>${delta>=0?"+":""}${fmtNum(delta,0)}</b> gap.`
+           : ``);
 }
 
 /* ─── COMPARE ─── */
