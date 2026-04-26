@@ -106,6 +106,37 @@
         </div>
       </div>
 
+      <!-- Operating-point banner: where the call centre actually runs vs. optimal -->
+      <div class="opbar" id="opBar">
+        <div class="opbar-head">
+          <div class="opbar-eyebrow">CURRENT OPERATING POINT</div>
+          <div class="opbar-title" id="opTitle">—</div>
+          <div class="opbar-sub" id="opSub">—</div>
+        </div>
+        <div class="opbar-rail">
+          <div class="opbar-axis">
+            <span class="opbar-axis-tick">0%</span>
+            <span class="opbar-axis-tick">25%</span>
+            <span class="opbar-axis-tick">50%</span>
+            <span class="opbar-axis-tick">75%</span>
+            <span class="opbar-axis-tick">100%</span>
+          </div>
+          <div class="opbar-track">
+            <div class="opbar-band opbar-band-opt" id="opBandOpt"></div>
+            <div class="opbar-band opbar-band-bad" id="opBandBad"></div>
+            <div class="opbar-marker opbar-marker-current" id="opMarkerCurrent">
+              <div class="opbar-marker-dot"></div>
+              <div class="opbar-marker-label" id="opMarkerLabelCurrent">Current</div>
+            </div>
+            <div class="opbar-marker opbar-marker-median" id="opMarkerMedian">
+              <div class="opbar-marker-tick"></div>
+              <div class="opbar-marker-label opbar-marker-label-bottom" id="opMarkerLabelMedian">Long-term median</div>
+            </div>
+          </div>
+        </div>
+        <div class="opbar-foot" id="opFoot">—</div>
+      </div>
+
       <!-- MAIN CHART: scatter + smoothed curve + optimal/bad bands -->
       <div class="chart-wrap">
         <div class="chart-head">

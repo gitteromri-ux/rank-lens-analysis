@@ -135,6 +135,9 @@ function renderCategory(cat){
   document.getElementById("verStatDetail").textContent = 
     `Spearman ${d.spearman_r.toFixed(2)}, Pearson ${d.pearson_r.toFixed(2)} (p=${d.pearson_p < 0.001 ? "<0.001" : d.pearson_p.toFixed(3)}) · n=${d.n_weeks}`;
 
+  // Operating-point banner: where the call center actually runs vs. optimal
+  renderOperatingBar(cat, d);
+
   // Main chart
   renderMainChart(cat, d);
   renderTSChart(cat, d);
@@ -254,6 +257,109 @@ function buildRecommendation(cat, d){
   return "";
 }
 
+/* ─── OPERATING POINT BANNER ─── */
+
+function renderOperatingBar(cat, d){
+  const op = d.operating;
+  const bar = document.getElementById('opBar');
+  if(!op || op.current_share == null){
+    if(bar) bar.style.display = 'none';
+    return;
+  }
+  if(bar) bar.style.display = '';
+
+  const cur = op.current_share;          // trailing 4-week mean share
+  const med = op.all_time_share_p50;     // long-term median share
+  const optLow = d.optimal_low;
+  const optHigh = d.optimal_high;
+  const badHigh = d.bad_high_threshold;
+
+  // Position bands & markers as % of full 0–100% track
+  const pct = v => `${Math.max(0, Math.min(100, v * 100))}%`;
+
+  const bandOpt = document.getElementById('opBandOpt');
+  if(optLow != null && optHigh != null){
+    bandOpt.style.display = '';
+    bandOpt.style.left = pct(optLow);
+    bandOpt.style.width = `${(optHigh - optLow) * 100}%`;
+  } else {
+    bandOpt.style.display = 'none';
+  }
+
+  const bandBad = document.getElementById('opBandBad');
+  if(badHigh != null){
+    bandBad.style.display = '';
+    bandBad.style.left = pct(badHigh);
+    bandBad.style.width = `${(1 - badHigh) * 100}%`;
+  } else {
+    bandBad.style.display = 'none';
+  }
+
+  // Current marker (red dot, label above)
+  const mkCur = document.getElementById('opMarkerCurrent');
+  mkCur.style.left = pct(cur);
+  document.getElementById('opMarkerLabelCurrent').textContent =
+    `Current ${fmtPct(cur, 1)}`;
+
+  // Long-term median marker (neutral tick, label below)
+  const mkMed = document.getElementById('opMarkerMedian');
+  if(med != null){
+    mkMed.style.display = '';
+    mkMed.style.left = pct(med);
+    document.getElementById('opMarkerLabelMedian').textContent =
+      `All-time median ${fmtPct(med, 0)}`;
+  } else {
+    mkMed.style.display = 'none';
+  }
+
+  // Headline copy
+  const where = cat === 'Overall' ? 'The call center' : `${cat}`;
+  const optTxt = (optLow != null && optHigh != null)
+    ? `${fmtPct(optLow,0)}–${fmtPct(optHigh,0)}`
+    : '—';
+
+  let gapTxt = '';
+  let verdictClass = 'opbar-good';
+  let verdictWord = 'inside the optimal band';
+  if(optHigh != null && cur > optHigh){
+    const gap = (cur - optHigh) * 100;
+    gapTxt = `+${gap.toFixed(1)}pp above the optimal ceiling`;
+    verdictClass = '';
+    verdictWord = `${gap.toFixed(1)}pp <b>above</b> optimal`;
+  } else if(optLow != null && cur < optLow){
+    const gap = (optLow - cur) * 100;
+    gapTxt = `${gap.toFixed(1)}pp below the optimal floor`;
+    verdictClass = '';
+    verdictWord = `${gap.toFixed(1)}pp <b>below</b> optimal`;
+  } else {
+    gapTxt = `inside the optimal band`;
+  }
+
+  document.getElementById('opTitle').innerHTML =
+    `${where} is operating at <b>${fmtPct(cur, 1)}</b> rank 3–4 share — ${verdictWord}.`;
+
+  const weeks = op.current_weeks || 4;
+  const endDate = op.current_week_end
+    ? new Date(op.current_week_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
+  document.getElementById('opSub').textContent =
+    `Trailing ${weeks}-week average through ${endDate}. Optimal range: ${optTxt}.`;
+
+  // Footer narrative
+  let foot = '';
+  if(optHigh != null && cur > optHigh){
+    foot = `The bar above shows where the call center sits today (red dot) versus where SOV peaks (green band). ` +
+           `To recover SOV, lower rank 3–4 share toward the <span class="opbar-good">${optTxt}</span> band — ` +
+           `that means putting more rank 1–2 reps on the phones, not pulling top reps off them.`;
+  } else if(optLow != null && cur < optLow){
+    foot = `The current operating point sits below the optimal floor — push more rank 3–4 contacts up to the ` +
+           `<span class="opbar-good">${optTxt}</span> band to reach peak SOV.`;
+  } else {
+    foot = `Currently inside the optimal band — hold this mix.`;
+  }
+  document.getElementById('opFoot').innerHTML = foot;
+}
+
 /* ─── CHARTS ─── */
 
 function renderMainChart(cat, d){
@@ -331,6 +437,28 @@ function renderMainChart(cat, d){
     borderWidth: 2,
     radius: 5
   };
+  // Current operating point — vertical line on the SOV response curve
+  if(d.operating && d.operating.current_share != null){
+    const cs = d.operating.current_share;
+    annotations.currentOpLine = {
+      type: 'line',
+      xMin: cs, xMax: cs,
+      borderColor: COLORS.bad,
+      borderWidth: 2,
+      borderDash: [6, 4],
+      label: {
+        display: true,
+        content: `Current ${(cs*100).toFixed(1)}%`,
+        position: 'start',
+        backgroundColor: COLORS.bad,
+        color: 'white',
+        font: { size: 10, weight: '600', family: 'JetBrains Mono' },
+        padding: { x: 6, y: 3 },
+        yAdjust: -8
+      }
+    };
+  }
+
   annotations.medianY = {
     type: 'line',
     yMin: d.sov_median, yMax: d.sov_median,
