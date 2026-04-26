@@ -114,18 +114,29 @@ function renderCategory(cat){
   tag.className = "panel-tag";
 
   // Verdicts
+  const isWeakSignal = Math.abs(d.spearman_r) < 0.15 || d.spearman_p > 0.10;
   const optLow  = d.optimal_low;
   const optHigh = d.optimal_high;
-  const optVal = (optLow != null && optHigh != null) ? `${fmtPct(optLow,0)}–${fmtPct(optHigh,0)}` : "—";
-  document.getElementById("verOptimal").textContent = optVal;
-  document.getElementById("verOptimalDetail").textContent = 
-    (optLow != null)
-      ? `SOV within 3% of peak when rank 3–4 share is in this band.`
-      : "Not identifiable from current data.";
 
-  const badTxt = buildBadText(d);
-  document.getElementById("verBad").textContent = badTxt.value;
-  document.getElementById("verBadDetail").textContent = badTxt.detail;
+  if(isWeakSignal){
+    document.getElementById("verOptimal").textContent = "Not identifiable";
+    document.getElementById("verOptimalDetail").textContent = 
+      `No statistically meaningful relationship in this school (ρ=${d.spearman_r.toFixed(2)}, p=${d.spearman_p.toFixed(2)}). Curve is flat within noise.`;
+    document.getElementById("verBad").textContent = "—";
+    document.getElementById("verBadDetail").textContent = 
+      `No bad zone with the signal this weak — SOV doesn’t respond reliably to rank 3–4 share.`;
+  } else {
+    const optVal = (optLow != null && optHigh != null) ? `${fmtPct(optLow,0)}–${fmtPct(optHigh,0)}` : "—";
+    document.getElementById("verOptimal").textContent = optVal;
+    document.getElementById("verOptimalDetail").textContent = 
+      (optLow != null)
+        ? `SOV within 3% of peak when rank 3–4 share is in this band.`
+        : "Not identifiable from current data.";
+
+    const badTxt = buildBadText(d);
+    document.getElementById("verBad").textContent = badTxt.value;
+    document.getElementById("verBadDetail").textContent = badTxt.detail;
+  }
 
   document.getElementById("verPeak").textContent = fmtNum(d.sov_peak, 0);
   document.getElementById("verPeakDetail").textContent = 
@@ -192,6 +203,12 @@ function chartNote(cat, d){
 /* Narrates what happens BELOW the optimal range — the user's explicit question. */
 function binNote(cat, d){
   const lo = d.optimal_low;
+  const isWeak = Math.abs(d.spearman_r) < 0.15 || d.spearman_p > 0.10;
+  if(isWeak){
+    return `<b>No defensible optimal threshold</b> for this school (ρ=${d.spearman_r.toFixed(2)}, p=${d.spearman_p.toFixed(2)}). ` +
+           `The histogram below shows mean SOV by rank 3–4 share bucket — bars are roughly flat across the observed range, ` +
+           `which is consistent with SOV being insensitive to rank mix here.`;
+  }
   if(lo == null) return `Below-optimal behaviour cannot be characterised for this school.`;
 
   const below = d.scatter.filter(p => p.x < lo);
@@ -225,15 +242,18 @@ function binNote(cat, d){
 function buildInsight(cat, d){
   const sig = signalLabel(d.spearman_r, d.spearman_p);
   const tr = trendLabel(d.trend);
+  const isWeak = Math.abs(d.spearman_r) < 0.15 || d.spearman_p > 0.10;
   let lede = "";
 
-  if(cat === "Overall"){
-    lede = `Across the call center, SOV peaks near <strong>${fmtPct(d.optimal_center,0)}</strong> rank 3–4 share and degrades as that share climbs toward saturation. The pattern is consistent across both Hebrew and Biblical schools — chasing a higher rank 3–4 concentration actively hurts SOV.`;
-  } else if(cat === "Biblical Related" || cat === "Hebrew Related"){
+  if(isWeak){
+    lede = `In ${cat === "Overall" ? "the blended call-center view" : cat}, the relationship between rank 3–4 share and SOV is <strong>not statistically meaningful</strong> (ρ = ${d.spearman_r.toFixed(2)}, p = ${d.spearman_p.toFixed(2)}). The smoothed curve is essentially flat across the observed range, and the apparent "peak" near <strong>${fmtPct(d.optimal_center,0)}</strong> is within noise. We can’t identify a defensible optimal band from this dataset — SOV in this school appears insensitive to which rank tier is doing the contacting.`;
+  } else if(cat === "Overall"){
+    lede = `Across the call center, SOV peaks near <strong>${fmtPct(d.optimal_center,0)}</strong> rank 3–4 share and degrades as that share climbs toward saturation. Chasing a higher rank 3–4 concentration actively hurts blended SOV.`;
+  } else {
     lede = `<strong>Counterintuitively,</strong> SOV in ${cat} is <em>not</em> maximized by concentrating contacts with the top tier. The curve peaks around <strong>${fmtPct(d.optimal_center,0)}</strong> rank 3–4 share — a broader roster, including rank 1–2 reps, outperforms weeks when only top reps are active. The operational read: weeks where only top reps show up are often under-staffed weeks, and volume suffers.`;
   }
 
-  const recLine = buildRecommendation(cat, d);
+  const recLine = buildRecommendation(cat, d, isWeak);
 
   return `
     <h4>What this school is telling you</h4>
@@ -247,14 +267,11 @@ function buildInsight(cat, d){
   `;
 }
 
-function buildRecommendation(cat, d){
-  const peakLift = d.sov_peak - d.sov_median;
-  const pctLift = peakLift / d.sov_median * 100;
-
-  if(cat === "Biblical Related" || cat === "Hebrew Related" || cat === "Overall"){
-    return `<strong>Target:</strong> Don't chase saturation. Operate at <strong>${fmtPct(d.optimal_low,0)}–${fmtPct(d.optimal_high,0)}</strong>. <em>Above ${fmtPct(d.bad_high_threshold||0.9,0)}</em>, SOV is pressured — usually a signal that volume has thinned. Ensure rank 1–2 reps are on the phones and contributing base load.`;
+function buildRecommendation(cat, d, isWeak){
+  if(isWeak){
+    return `<strong>Recommendation:</strong> Don’t over-read the curve here. With no statistically meaningful relationship in the data, optimising rank 3–4 share won’t reliably move SOV in this school — staffing decisions should be made on volume and capacity grounds rather than rank-mix targets. The lift, if any, is below the noise floor.`;
   }
-  return "";
+  return `<strong>Target:</strong> Don't chase saturation. Operate at <strong>${fmtPct(d.optimal_low,0)}–${fmtPct(d.optimal_high,0)}</strong>. <em>Above ${fmtPct(d.bad_high_threshold||0.9,0)}</em>, SOV is pressured — usually a signal that volume has thinned. Ensure rank 1–2 reps are on the phones and contributing base load.`;
 }
 
 /* ─── OPERATING POINT BANNER ─── */
@@ -317,38 +334,45 @@ function renderOperatingBar(cat, d){
   const optTxt = (optLow != null && optHigh != null)
     ? `${fmtPct(optLow,0)}–${fmtPct(optHigh,0)}`
     : '—';
+  const isWeakSignal = Math.abs(d.spearman_r) < 0.15 || d.spearman_p > 0.10;
 
-  let gapTxt = '';
-  let verdictClass = 'opbar-good';
+  // Hide optimal band overlay when signal is weak — don’t pretend a noise-level peak is real
+  if(isWeakSignal){
+    bandOpt.style.display = 'none';
+    bandBad.style.display = 'none';
+  }
+
   let verdictWord = 'inside the optimal band';
-  if(optHigh != null && cur > optHigh){
+  if(isWeakSignal){
+    verdictWord = `— no defensible optimum in this school`;
+  } else if(optHigh != null && cur > optHigh){
     const gap = (cur - optHigh) * 100;
-    gapTxt = `+${gap.toFixed(1)}pp above the optimal ceiling`;
-    verdictClass = '';
     verdictWord = `${gap.toFixed(1)}pp <b>above</b> optimal`;
   } else if(optLow != null && cur < optLow){
     const gap = (optLow - cur) * 100;
-    gapTxt = `${gap.toFixed(1)}pp below the optimal floor`;
-    verdictClass = '';
     verdictWord = `${gap.toFixed(1)}pp <b>below</b> optimal`;
-  } else {
-    gapTxt = `inside the optimal band`;
   }
 
   document.getElementById('opTitle').innerHTML =
-    `${where} is operating at <b>${fmtPct(cur, 1)}</b> rank 3–4 share — ${verdictWord}.`;
+    `${where} is operating at <b>${fmtPct(cur, 1)}</b> rank 3–4 share ${isWeakSignal ? verdictWord : '— ' + verdictWord + '.'}`;
 
   const weeks = op.current_weeks || 4;
   const endDate = op.current_week_end
     ? new Date(op.current_week_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : '';
-  document.getElementById('opSub').textContent =
-    `Trailing ${weeks}-week average through ${endDate}. Optimal range: ${optTxt}.`;
+  document.getElementById('opSub').textContent = isWeakSignal
+    ? `Trailing ${weeks}-week average through ${endDate}. No statistically meaningful optimal range identified.`
+    : `Trailing ${weeks}-week average through ${endDate}. Optimal range: ${optTxt}.`;
 
   // Footer narrative
   let foot = '';
-  if(optHigh != null && cur > optHigh){
-    foot = `The bar above shows where the call center sits today (red dot) versus where SOV peaks (green band). ` +
+  if(isWeakSignal){
+    foot = `The relationship between rank 3–4 share and SOV is too weak to act on in this school ` +
+           `(ρ=${d.spearman_r.toFixed(2)}, p=${d.spearman_p.toFixed(2)}). ` +
+           `The current operating point is shown for reference only. ` +
+           `There is no green band because SOV does not reliably respond to rank-mix changes in this school.`;
+  } else if(optHigh != null && cur > optHigh){
+    foot = `The bar above shows where ${cat === 'Overall' ? 'the call center' : 'this school'} sits today (red dot) versus where SOV peaks (green band). ` +
            `To recover SOV, lower rank 3–4 share toward the <span class="opbar-good">${optTxt}</span> band — ` +
            `that means putting more rank 1–2 reps on the phones, not pulling top reps off them.`;
   } else if(optLow != null && cur < optLow){
@@ -378,7 +402,8 @@ function renderMainChart(cat, d){
 
   // annotations
   const annotations = {};
-  if(d.optimal_low != null && d.optimal_high != null){
+  const isWeakSignalChart = Math.abs(d.spearman_r) < 0.15 || d.spearman_p > 0.10;
+  if(!isWeakSignalChart && d.optimal_low != null && d.optimal_high != null){
     annotations.optBand = {
       type: 'box',
       xMin: d.optimal_low,
@@ -398,7 +423,7 @@ function renderMainChart(cat, d){
       }
     };
   }
-  if(d.bad_low_threshold != null){
+  if(!isWeakSignalChart && d.bad_low_threshold != null){
     annotations.badLow = {
       type: 'box',
       xMin: Math.max(0, d.share_min - 0.05),
@@ -413,7 +438,7 @@ function renderMainChart(cat, d){
       borderColor: COLORS.bad, borderWidth: 1, borderDash: [3,3]
     };
   }
-  if(d.bad_high_threshold != null){
+  if(!isWeakSignalChart && d.bad_high_threshold != null){
     annotations.badHigh = {
       type: 'box',
       xMin: d.bad_high_threshold,
@@ -698,7 +723,8 @@ function renderBinChart(cat, d){
 
   // Build optimal-range band annotation based on bucket edges
   const optAnnotations = {};
-  if(d.optimal_low != null && d.optimal_high != null){
+  const isWeakBin = Math.abs(d.spearman_r) < 0.15 || d.spearman_p > 0.10;
+  if(!isWeakBin && d.optimal_low != null && d.optimal_high != null){
     // Find bucket indices that fall within optimal
     let startIdx = -1, endIdx = -1;
     bins.forEach((b, i) => {
@@ -852,7 +878,8 @@ function renderDailyScatter(cat, d){
 
   // Optimal band annotation
   const annots = {};
-  if(d.optimal_low != null && d.optimal_high != null){
+  const isWeakDaily = Math.abs(d.spearman_r) < 0.15 || d.spearman_p > 0.10;
+  if(!isWeakDaily && d.optimal_low != null && d.optimal_high != null){
     annots.optBand = {
       type: 'box', xMin: d.optimal_low, xMax: d.optimal_high,
       backgroundColor: 'rgba(42,127,82,0.07)', borderWidth: 0,
@@ -860,7 +887,7 @@ function renderDailyScatter(cat, d){
                color: COLORS.good, font: { size: 10, weight: 'bold' }, backgroundColor: 'transparent' }
     };
   }
-  if(d.bad_high_threshold != null){
+  if(!isWeakDaily && d.bad_high_threshold != null){
     annots.badBand = {
       type: 'box', xMin: d.bad_high_threshold, xMax: 1.02,
       backgroundColor: 'rgba(178,59,46,0.05)', borderWidth: 0
