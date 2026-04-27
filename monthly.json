@@ -1,0 +1,680 @@
+{
+  "Overall": [
+    {
+      "month": "2024-01",
+      "month_label": "Jan '24",
+      "share_1_2": 0.0242,
+      "share_3_4": 0.9758,
+      "total_sov": 370094.0,
+      "total_contacted": 5623
+    },
+    {
+      "month": "2024-02",
+      "month_label": "Feb '24",
+      "share_1_2": 0.132,
+      "share_3_4": 0.868,
+      "total_sov": 322719.0,
+      "total_contacted": 5084
+    },
+    {
+      "month": "2024-03",
+      "month_label": "Mar '24",
+      "share_1_2": 0.1127,
+      "share_3_4": 0.8873,
+      "total_sov": 309834.0,
+      "total_contacted": 4499
+    },
+    {
+      "month": "2024-04",
+      "month_label": "Apr '24",
+      "share_1_2": 0.1616,
+      "share_3_4": 0.8384,
+      "total_sov": 331824.0,
+      "total_contacted": 3750
+    },
+    {
+      "month": "2024-05",
+      "month_label": "May '24",
+      "share_1_2": 0.1487,
+      "share_3_4": 0.8513,
+      "total_sov": 466712.0,
+      "total_contacted": 4753
+    },
+    {
+      "month": "2024-06",
+      "month_label": "Jun '24",
+      "share_1_2": 0.1892,
+      "share_3_4": 0.8108,
+      "total_sov": 400852.0,
+      "total_contacted": 4562
+    },
+    {
+      "month": "2024-07",
+      "month_label": "Jul '24",
+      "share_1_2": 0.2212,
+      "share_3_4": 0.7788,
+      "total_sov": 407971.0,
+      "total_contacted": 4797
+    },
+    {
+      "month": "2024-08",
+      "month_label": "Aug '24",
+      "share_1_2": 0.175,
+      "share_3_4": 0.825,
+      "total_sov": 372521.0,
+      "total_contacted": 4514
+    },
+    {
+      "month": "2024-09",
+      "month_label": "Sep '24",
+      "share_1_2": 0.1137,
+      "share_3_4": 0.8863,
+      "total_sov": 437698.0,
+      "total_contacted": 3685
+    },
+    {
+      "month": "2024-10",
+      "month_label": "Oct '24",
+      "share_1_2": 0.1655,
+      "share_3_4": 0.8345,
+      "total_sov": 488654.0,
+      "total_contacted": 4247
+    },
+    {
+      "month": "2024-11",
+      "month_label": "Nov '24",
+      "share_1_2": 0.2423,
+      "share_3_4": 0.7577,
+      "total_sov": 442884.0,
+      "total_contacted": 3298
+    },
+    {
+      "month": "2024-12",
+      "month_label": "Dec '24",
+      "share_1_2": 0.0867,
+      "share_3_4": 0.9133,
+      "total_sov": 458434.0,
+      "total_contacted": 3068
+    },
+    {
+      "month": "2025-01",
+      "month_label": "Jan '25",
+      "share_1_2": 0.0856,
+      "share_3_4": 0.9144,
+      "total_sov": 476231.0,
+      "total_contacted": 3142
+    },
+    {
+      "month": "2025-02",
+      "month_label": "Feb '25",
+      "share_1_2": 0.2454,
+      "share_3_4": 0.7546,
+      "total_sov": 417970.0,
+      "total_contacted": 2906
+    },
+    {
+      "month": "2025-03",
+      "month_label": "Mar '25",
+      "share_1_2": 0.2041,
+      "share_3_4": 0.7959,
+      "total_sov": 379091.0,
+      "total_contacted": 2739
+    },
+    {
+      "month": "2025-04",
+      "month_label": "Apr '25",
+      "share_1_2": 0.1295,
+      "share_3_4": 0.8705,
+      "total_sov": 299185.0,
+      "total_contacted": 2324
+    },
+    {
+      "month": "2025-05",
+      "month_label": "May '25",
+      "share_1_2": 0.0427,
+      "share_3_4": 0.9573,
+      "total_sov": 298363.0,
+      "total_contacted": 2132
+    },
+    {
+      "month": "2025-06",
+      "month_label": "Jun '25",
+      "share_1_2": 0.0404,
+      "share_3_4": 0.9596,
+      "total_sov": 361883.0,
+      "total_contacted": 2029
+    },
+    {
+      "month": "2025-07",
+      "month_label": "Jul '25",
+      "share_1_2": 0.0659,
+      "share_3_4": 0.9341,
+      "total_sov": 411604.0,
+      "total_contacted": 2383
+    },
+    {
+      "month": "2025-08",
+      "month_label": "Aug '25",
+      "share_1_2": 0.0799,
+      "share_3_4": 0.9201,
+      "total_sov": 473641.0,
+      "total_contacted": 2479
+    },
+    {
+      "month": "2025-09",
+      "month_label": "Sep '25",
+      "share_1_2": 0.1028,
+      "share_3_4": 0.8972,
+      "total_sov": 488901.0,
+      "total_contacted": 2248
+    },
+    {
+      "month": "2025-10",
+      "month_label": "Oct '25",
+      "share_1_2": 0.1401,
+      "share_3_4": 0.8599,
+      "total_sov": 534411.0,
+      "total_contacted": 2277
+    },
+    {
+      "month": "2025-11",
+      "month_label": "Nov '25",
+      "share_1_2": 0.3191,
+      "share_3_4": 0.6809,
+      "total_sov": 445837.0,
+      "total_contacted": 2015
+    },
+    {
+      "month": "2025-12",
+      "month_label": "Dec '25",
+      "share_1_2": 0.3793,
+      "share_3_4": 0.6207,
+      "total_sov": 472377.0,
+      "total_contacted": 2399
+    },
+    {
+      "month": "2026-01",
+      "month_label": "Jan '26",
+      "share_1_2": 0.3372,
+      "share_3_4": 0.6628,
+      "total_sov": 429488.0,
+      "total_contacted": 2408
+    },
+    {
+      "month": "2026-02",
+      "month_label": "Feb '26",
+      "share_1_2": 0.1753,
+      "share_3_4": 0.8247,
+      "total_sov": 331399.0,
+      "total_contacted": 1871
+    },
+    {
+      "month": "2026-03",
+      "month_label": "Mar '26",
+      "share_1_2": 0.0181,
+      "share_3_4": 0.9819,
+      "total_sov": 364139.0,
+      "total_contacted": 2380
+    },
+    {
+      "month": "2026-04",
+      "month_label": "Apr '26",
+      "share_1_2": 0.1254,
+      "share_3_4": 0.8746,
+      "total_sov": 247259.0,
+      "total_contacted": 2066
+    }
+  ],
+  "Biblical Related": [
+    {
+      "month": "2024-01",
+      "month_label": "Jan '24",
+      "share_1_2": 0.0034,
+      "share_3_4": 0.9966,
+      "total_sov": 231251.0,
+      "total_contacted": 4435
+    },
+    {
+      "month": "2024-02",
+      "month_label": "Feb '24",
+      "share_1_2": 0.1534,
+      "share_3_4": 0.8466,
+      "total_sov": 207834.0,
+      "total_contacted": 4043
+    },
+    {
+      "month": "2024-03",
+      "month_label": "Mar '24",
+      "share_1_2": 0.1493,
+      "share_3_4": 0.8507,
+      "total_sov": 192953.0,
+      "total_contacted": 3395
+    },
+    {
+      "month": "2024-04",
+      "month_label": "Apr '24",
+      "share_1_2": 0.2042,
+      "share_3_4": 0.7958,
+      "total_sov": 210221.0,
+      "total_contacted": 2747
+    },
+    {
+      "month": "2024-05",
+      "month_label": "May '24",
+      "share_1_2": 0.1462,
+      "share_3_4": 0.8538,
+      "total_sov": 274017.0,
+      "total_contacted": 3099
+    },
+    {
+      "month": "2024-06",
+      "month_label": "Jun '24",
+      "share_1_2": 0.2007,
+      "share_3_4": 0.7993,
+      "total_sov": 229478.0,
+      "total_contacted": 3263
+    },
+    {
+      "month": "2024-07",
+      "month_label": "Jul '24",
+      "share_1_2": 0.2463,
+      "share_3_4": 0.7537,
+      "total_sov": 233700.0,
+      "total_contacted": 3423
+    },
+    {
+      "month": "2024-08",
+      "month_label": "Aug '24",
+      "share_1_2": 0.2241,
+      "share_3_4": 0.7759,
+      "total_sov": 232900.0,
+      "total_contacted": 3306
+    },
+    {
+      "month": "2024-09",
+      "month_label": "Sep '24",
+      "share_1_2": 0.1354,
+      "share_3_4": 0.8646,
+      "total_sov": 288270.0,
+      "total_contacted": 2562
+    },
+    {
+      "month": "2024-10",
+      "month_label": "Oct '24",
+      "share_1_2": 0.2045,
+      "share_3_4": 0.7955,
+      "total_sov": 304063.0,
+      "total_contacted": 3086
+    },
+    {
+      "month": "2024-11",
+      "month_label": "Nov '24",
+      "share_1_2": 0.3033,
+      "share_3_4": 0.6967,
+      "total_sov": 252922.0,
+      "total_contacted": 2311
+    },
+    {
+      "month": "2024-12",
+      "month_label": "Dec '24",
+      "share_1_2": 0.0867,
+      "share_3_4": 0.9133,
+      "total_sov": 288768.0,
+      "total_contacted": 2088
+    },
+    {
+      "month": "2025-01",
+      "month_label": "Jan '25",
+      "share_1_2": 0.0972,
+      "share_3_4": 0.9028,
+      "total_sov": 309226.0,
+      "total_contacted": 2171
+    },
+    {
+      "month": "2025-02",
+      "month_label": "Feb '25",
+      "share_1_2": 0.2946,
+      "share_3_4": 0.7054,
+      "total_sov": 259073.0,
+      "total_contacted": 2037
+    },
+    {
+      "month": "2025-03",
+      "month_label": "Mar '25",
+      "share_1_2": 0.1877,
+      "share_3_4": 0.8123,
+      "total_sov": 207413.0,
+      "total_contacted": 1641
+    },
+    {
+      "month": "2025-04",
+      "month_label": "Apr '25",
+      "share_1_2": 0.0568,
+      "share_3_4": 0.9432,
+      "total_sov": 185271.0,
+      "total_contacted": 1425
+    },
+    {
+      "month": "2025-05",
+      "month_label": "May '25",
+      "share_1_2": 0.0105,
+      "share_3_4": 0.9895,
+      "total_sov": 184845.0,
+      "total_contacted": 1424
+    },
+    {
+      "month": "2025-06",
+      "month_label": "Jun '25",
+      "share_1_2": 0.04,
+      "share_3_4": 0.96,
+      "total_sov": 216136.0,
+      "total_contacted": 1375
+    },
+    {
+      "month": "2025-07",
+      "month_label": "Jul '25",
+      "share_1_2": 0.0716,
+      "share_3_4": 0.9284,
+      "total_sov": 226973.0,
+      "total_contacted": 1663
+    },
+    {
+      "month": "2025-08",
+      "month_label": "Aug '25",
+      "share_1_2": 0.0602,
+      "share_3_4": 0.9398,
+      "total_sov": 326440.0,
+      "total_contacted": 1860
+    },
+    {
+      "month": "2025-09",
+      "month_label": "Sep '25",
+      "share_1_2": 0.0753,
+      "share_3_4": 0.9247,
+      "total_sov": 333320.0,
+      "total_contacted": 1554
+    },
+    {
+      "month": "2025-10",
+      "month_label": "Oct '25",
+      "share_1_2": 0.2088,
+      "share_3_4": 0.7912,
+      "total_sov": 305318.0,
+      "total_contacted": 1528
+    },
+    {
+      "month": "2025-11",
+      "month_label": "Nov '25",
+      "share_1_2": 0.4548,
+      "share_3_4": 0.5452,
+      "total_sov": 300071.0,
+      "total_contacted": 1326
+    },
+    {
+      "month": "2025-12",
+      "month_label": "Dec '25",
+      "share_1_2": 0.4595,
+      "share_3_4": 0.5405,
+      "total_sov": 323925.0,
+      "total_contacted": 1754
+    },
+    {
+      "month": "2026-01",
+      "month_label": "Jan '26",
+      "share_1_2": 0.3946,
+      "share_3_4": 0.6054,
+      "total_sov": 283415.0,
+      "total_contacted": 1680
+    },
+    {
+      "month": "2026-02",
+      "month_label": "Feb '26",
+      "share_1_2": 0.2081,
+      "share_3_4": 0.7919,
+      "total_sov": 215010.0,
+      "total_contacted": 1355
+    },
+    {
+      "month": "2026-03",
+      "month_label": "Mar '26",
+      "share_1_2": 0.0018,
+      "share_3_4": 0.9982,
+      "total_sov": 215838.0,
+      "total_contacted": 1665
+    },
+    {
+      "month": "2026-04",
+      "month_label": "Apr '26",
+      "share_1_2": 0.1538,
+      "share_3_4": 0.8462,
+      "total_sov": 180767.0,
+      "total_contacted": 1671
+    }
+  ],
+  "Hebrew Related": [
+    {
+      "month": "2024-01",
+      "month_label": "Jan '24",
+      "share_1_2": 0.1019,
+      "share_3_4": 0.8981,
+      "total_sov": 138843.0,
+      "total_contacted": 1188
+    },
+    {
+      "month": "2024-02",
+      "month_label": "Feb '24",
+      "share_1_2": 0.049,
+      "share_3_4": 0.951,
+      "total_sov": 114885.0,
+      "total_contacted": 1041
+    },
+    {
+      "month": "2024-03",
+      "month_label": "Mar '24",
+      "share_1_2": 0.0,
+      "share_3_4": 1.0,
+      "total_sov": 116881.0,
+      "total_contacted": 1104
+    },
+    {
+      "month": "2024-04",
+      "month_label": "Apr '24",
+      "share_1_2": 0.0449,
+      "share_3_4": 0.9551,
+      "total_sov": 121603.0,
+      "total_contacted": 1003
+    },
+    {
+      "month": "2024-05",
+      "month_label": "May '24",
+      "share_1_2": 0.1536,
+      "share_3_4": 0.8464,
+      "total_sov": 192695.0,
+      "total_contacted": 1654
+    },
+    {
+      "month": "2024-06",
+      "month_label": "Jun '24",
+      "share_1_2": 0.1601,
+      "share_3_4": 0.8399,
+      "total_sov": 171374.0,
+      "total_contacted": 1299
+    },
+    {
+      "month": "2024-07",
+      "month_label": "Jul '24",
+      "share_1_2": 0.1587,
+      "share_3_4": 0.8413,
+      "total_sov": 174271.0,
+      "total_contacted": 1374
+    },
+    {
+      "month": "2024-08",
+      "month_label": "Aug '24",
+      "share_1_2": 0.0406,
+      "share_3_4": 0.9594,
+      "total_sov": 139621.0,
+      "total_contacted": 1208
+    },
+    {
+      "month": "2024-09",
+      "month_label": "Sep '24",
+      "share_1_2": 0.0641,
+      "share_3_4": 0.9359,
+      "total_sov": 149428.0,
+      "total_contacted": 1123
+    },
+    {
+      "month": "2024-10",
+      "month_label": "Oct '24",
+      "share_1_2": 0.062,
+      "share_3_4": 0.938,
+      "total_sov": 184591.0,
+      "total_contacted": 1161
+    },
+    {
+      "month": "2024-11",
+      "month_label": "Nov '24",
+      "share_1_2": 0.0993,
+      "share_3_4": 0.9007,
+      "total_sov": 189963.0,
+      "total_contacted": 987
+    },
+    {
+      "month": "2024-12",
+      "month_label": "Dec '24",
+      "share_1_2": 0.0867,
+      "share_3_4": 0.9133,
+      "total_sov": 169667.0,
+      "total_contacted": 980
+    },
+    {
+      "month": "2025-01",
+      "month_label": "Jan '25",
+      "share_1_2": 0.0597,
+      "share_3_4": 0.9403,
+      "total_sov": 167004.0,
+      "total_contacted": 971
+    },
+    {
+      "month": "2025-02",
+      "month_label": "Feb '25",
+      "share_1_2": 0.13,
+      "share_3_4": 0.87,
+      "total_sov": 158897.0,
+      "total_contacted": 869
+    },
+    {
+      "month": "2025-03",
+      "month_label": "Mar '25",
+      "share_1_2": 0.2286,
+      "share_3_4": 0.7714,
+      "total_sov": 171678.0,
+      "total_contacted": 1098
+    },
+    {
+      "month": "2025-04",
+      "month_label": "Apr '25",
+      "share_1_2": 0.2447,
+      "share_3_4": 0.7553,
+      "total_sov": 113914.0,
+      "total_contacted": 899
+    },
+    {
+      "month": "2025-05",
+      "month_label": "May '25",
+      "share_1_2": 0.1073,
+      "share_3_4": 0.8927,
+      "total_sov": 113518.0,
+      "total_contacted": 708
+    },
+    {
+      "month": "2025-06",
+      "month_label": "Jun '25",
+      "share_1_2": 0.0413,
+      "share_3_4": 0.9587,
+      "total_sov": 145746.0,
+      "total_contacted": 654
+    },
+    {
+      "month": "2025-07",
+      "month_label": "Jul '25",
+      "share_1_2": 0.0528,
+      "share_3_4": 0.9472,
+      "total_sov": 184631.0,
+      "total_contacted": 720
+    },
+    {
+      "month": "2025-08",
+      "month_label": "Aug '25",
+      "share_1_2": 0.1389,
+      "share_3_4": 0.8611,
+      "total_sov": 147200.0,
+      "total_contacted": 619
+    },
+    {
+      "month": "2025-09",
+      "month_label": "Sep '25",
+      "share_1_2": 0.1643,
+      "share_3_4": 0.8357,
+      "total_sov": 155581.0,
+      "total_contacted": 694
+    },
+    {
+      "month": "2025-10",
+      "month_label": "Oct '25",
+      "share_1_2": 0.0,
+      "share_3_4": 1.0,
+      "total_sov": 229093.0,
+      "total_contacted": 749
+    },
+    {
+      "month": "2025-11",
+      "month_label": "Nov '25",
+      "share_1_2": 0.0581,
+      "share_3_4": 0.9419,
+      "total_sov": 145767.0,
+      "total_contacted": 689
+    },
+    {
+      "month": "2025-12",
+      "month_label": "Dec '25",
+      "share_1_2": 0.1612,
+      "share_3_4": 0.8388,
+      "total_sov": 148452.0,
+      "total_contacted": 645
+    },
+    {
+      "month": "2026-01",
+      "month_label": "Jan '26",
+      "share_1_2": 0.2047,
+      "share_3_4": 0.7953,
+      "total_sov": 146073.0,
+      "total_contacted": 728
+    },
+    {
+      "month": "2026-02",
+      "month_label": "Feb '26",
+      "share_1_2": 0.0891,
+      "share_3_4": 0.9109,
+      "total_sov": 116390.0,
+      "total_contacted": 516
+    },
+    {
+      "month": "2026-03",
+      "month_label": "Mar '26",
+      "share_1_2": 0.0559,
+      "share_3_4": 0.9441,
+      "total_sov": 148301.0,
+      "total_contacted": 715
+    },
+    {
+      "month": "2026-04",
+      "month_label": "Apr '26",
+      "share_1_2": 0.0051,
+      "share_3_4": 0.9949,
+      "total_sov": 66492.0,
+      "total_contacted": 395
+    }
+  ]
+}

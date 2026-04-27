@@ -28,8 +28,9 @@ const CATEGORY_COLORS = {
 
 let DATA = {};
 let KPIS = {};
+let MONTHLY = {};
 let CURRENT = "Overall";
-let charts = { main: null, ts: null, bin: null, compare: null };
+let charts = { main: null, ts: null, bin: null, compare: null, monthly: null };
 
 const fmtPct = (v, digits=1) => v == null ? "—" : `${(v*100).toFixed(digits)}%`;
 const fmtInt = n => n == null ? "—" : Math.round(n).toLocaleString("en-US");
@@ -42,11 +43,12 @@ Chart.defaults.color = COLORS.inkMuted;
 Chart.defaults.borderColor = COLORS.line;
 
 async function boot(){
-  const [d, k] = await Promise.all([
+  const [d, k, m] = await Promise.all([
     fetch("./data.json").then(r => r.json()),
-    fetch("./kpis.json").then(r => r.json())
+    fetch("./kpis.json").then(r => r.json()),
+    fetch("./monthly.json").then(r => r.json()).catch(() => ({}))
   ]);
-  DATA = d; KPIS = k;
+  DATA = d; KPIS = k; MONTHLY = m;
   renderHeader();
   renderTabs();
   renderCategory(CURRENT);
@@ -154,6 +156,7 @@ function renderCategory(cat){
   renderTSChart(cat, d);
   renderBinChart(cat, d);
   renderDailyScatter(cat, d);
+  renderMonthly(cat);
 
   // Chart note
   document.getElementById("chartNote").textContent = chartNote(cat, d);
@@ -1106,6 +1109,122 @@ function renderMatrix(){
       <div style="font-family: var(--font-mono); font-size: 13px; color: var(--ink-muted);">${d.n_weeks}</div>
     `;
     body.appendChild(row);
+  });
+}
+
+/* ===== Monthly contacted-mix vs total SOV ===== */
+function renderMonthly(cat){
+  const canvas = document.getElementById("monthlyChart");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if(charts.monthly){ charts.monthly.destroy(); charts.monthly = null; }
+
+  const rows = (MONTHLY && MONTHLY[cat]) ? MONTHLY[cat] : [];
+  if(!rows.length){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    return;
+  }
+
+  const labels = rows.map(r => r.month_label);
+  const share12 = rows.map(r => r.share_1_2 == null ? 0 : r.share_1_2 * 100);
+  const share34 = rows.map(r => r.share_3_4 == null ? 0 : r.share_3_4 * 100);
+  const sov     = rows.map(r => r.total_sov);
+  const contacted = rows.map(r => r.total_contacted);
+
+  charts.monthly = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        {
+          type: "bar",
+          label: "Rank 1–2 share",
+          data: share12,
+          backgroundColor: "rgba(42,127,82,0.85)",
+          borderColor: COLORS.good,
+          borderWidth: 0,
+          stack: "mix",
+          yAxisID: "yPct",
+          order: 2
+        },
+        {
+          type: "bar",
+          label: "Rank 3–4 share",
+          data: share34,
+          backgroundColor: "rgba(178,59,46,0.85)",
+          borderColor: COLORS.bad,
+          borderWidth: 0,
+          stack: "mix",
+          yAxisID: "yPct",
+          order: 2
+        },
+        {
+          type: "line",
+          label: "Total SOV",
+          data: sov,
+          borderColor: COLORS.amber,
+          backgroundColor: COLORS.amber,
+          borderWidth: 2.5,
+          pointRadius: 3.5,
+          pointHoverRadius: 5,
+          pointBackgroundColor: COLORS.amber,
+          pointBorderColor: "#fff",
+          pointBorderWidth: 1.5,
+          tension: 0.25,
+          yAxisID: "ySov",
+          order: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "rgba(26, 26, 28, 0.95)",
+          titleColor: "#fff",
+          bodyColor: "#e7e6e2",
+          padding: 10,
+          cornerRadius: 4,
+          displayColors: true,
+          callbacks: {
+            title: (items) => items[0].label,
+            label: (ctx) => {
+              const i = ctx.dataIndex;
+              if(ctx.dataset.label === "Total SOV"){
+                return `Total SOV: ${fmtInt(sov[i])}  (${fmtInt(contacted[i])} contacted)`;
+              }
+              return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: COLORS.inkMuted, maxRotation: 0, autoSkip: true, autoSkipPadding: 12 }
+        },
+        yPct: {
+          type: "linear",
+          position: "left",
+          stacked: true,
+          min: 0, max: 100,
+          grid: { color: COLORS.lineSoft, drawBorder: false },
+          ticks: { color: COLORS.inkMuted, callback: (v) => v + "%" },
+          title: { display: true, text: "Contacted-share by rank bucket", color: COLORS.inkMuted, font: { size: 11 } }
+        },
+        ySov: {
+          type: "linear",
+          position: "right",
+          beginAtZero: true,
+          grid: { display: false },
+          ticks: { color: COLORS.amber, callback: (v) => fmtInt(v) },
+          title: { display: true, text: "Total SOV (Course + Upsales)", color: COLORS.amber, font: { size: 11 } }
+        }
+      }
+    }
   });
 }
 
