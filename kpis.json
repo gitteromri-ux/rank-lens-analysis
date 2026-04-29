@@ -2,9 +2,13 @@
   "total_weeks": 122,
   "date_range_start": "2023-12-31",
   "date_range_end": "2026-04-26",
-  "total_contacted": 147526,
-  "n_categories": 2,
-  "n_reps": 117,
-  "total_sov_median": 118904.87244598,
-  "rank4_to_rank1_productivity": 1.5567322078385233
+  "total_contacted": 131697,
+  "n_cohorts": 4,
+  "n_reps": 106,
+  "total_sov_median": 112826.50382776001,
+  "rank4_to_rank1_productivity": 1.5567526425294629,
+  "rec_total_priority_count": 40,
+  "rec_total_weekly_lift": 56544.44938280821,
+  "rec_current_weekly_sov": 78307.2544922125,
+  "rec_total_lift_pct": 0.7220844320168504
 }
