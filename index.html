@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Rep Rank Optimization — SOV Sweet Spot Analysis</title>
+<title>Rank Lens — Top-Rep Productivity & Utilization</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.fontshare.com">
@@ -25,7 +25,7 @@
       </svg>
       <div class="brand-text">
         <div class="brand-name">Rank Lens</div>
-        <div class="brand-sub">SOV Sweet-Spot Analysis</div>
+        <div class="brand-sub">Top-Rep Productivity & Utilization</div>
       </div>
     </div>
     <div class="meta">
@@ -42,14 +42,16 @@
     <!-- HERO -->
     <section class="hero">
       <div class="hero-label">Executive Summary</div>
-      <h1 class="hero-title">Where does the call center perform best?</h1>
+      <h1 class="hero-title">Top reps convert better. The bottleneck is how many of them we put on the phone.</h1>
       <p class="hero-lede">
-        We analyzed every rep-week across the two core schools — Hebrew Related and Biblical Related —
-        pairing each rep's per-(school × language) rank (top performers = 3–4) with that school’s
-        weighted SOV. Under the new rank methodology (10-week rolling window, quality-weighted
-        cumulative cuts within each language pool), all three views show a meaningful negative
-        relationship: SOV peaks near a balanced 44–55% top-performer mix and degrades as that
-        share climbs toward saturation. Both schools currently sit above their sweet spot.
+        Across 122 weeks of Hebrew-Related and Biblical-Related calling, top-tier reps
+        (rank 4) convert contacted leads into SOV at <strong>1.4–1.6×</strong> the rate of
+        rank-1 reps. But total weekly SOV is essentially uncorrelated with the rank-3–4
+        share of contacts — when that share rises, it's because more top reps showed up
+        (Spearman ρ between r34 share and r34 reps active = +0.44), not because bottom
+        reps were displaced. The previous "negative response curve" was a mix-shift
+        artifact in the per-contact rate. The real lever is utilization: only
+        <strong>15–23%</strong> of the available top-rep roster is active in any given week.
       </p>
 
       <div class="kpi-row">
@@ -66,8 +68,8 @@
           <div class="kpi-value" id="kpiCats">—</div>
         </div>
         <div class="kpi">
-          <div class="kpi-label">Median SOV</div>
-          <div class="kpi-value" id="kpiSOV">—</div>
+          <div class="kpi-label">Rank-4 vs rank-1 productivity</div>
+          <div class="kpi-value" id="kpiProd">—</div>
         </div>
       </div>
     </section>
@@ -78,7 +80,7 @@
 
       <div class="panel-head">
         <div>
-          <div class="panel-eyebrow">Rank 3–4 Share Optimization</div>
+          <div class="panel-eyebrow">Productivity & Utilization</div>
           <h2 class="panel-title" id="panelTitle">—</h2>
           <p class="panel-sub" id="panelSub">—</p>
         </div>
@@ -88,31 +90,31 @@
       <!-- Verdict cards -->
       <div class="verdict-grid">
         <div class="verdict verdict-good">
-          <div class="verdict-eyebrow">Optimal Range</div>
-          <div class="verdict-value" id="verOptimal">—</div>
-          <div class="verdict-detail" id="verOptimalDetail">—</div>
+          <div class="verdict-eyebrow">Top-rep productivity</div>
+          <div class="verdict-value" id="verProd">—</div>
+          <div class="verdict-detail" id="verProdDetail">—</div>
         </div>
         <div class="verdict verdict-bad">
-          <div class="verdict-eyebrow">SOV turns bad</div>
-          <div class="verdict-value" id="verBad">—</div>
-          <div class="verdict-detail" id="verBadDetail">—</div>
+          <div class="verdict-eyebrow">Top-rep utilization</div>
+          <div class="verdict-value" id="verUtil">—</div>
+          <div class="verdict-detail" id="verUtilDetail">—</div>
         </div>
         <div class="verdict verdict-neutral">
-          <div class="verdict-eyebrow">Peak SOV achieved</div>
-          <div class="verdict-value" id="verPeak">—</div>
-          <div class="verdict-detail" id="verPeakDetail">—</div>
+          <div class="verdict-eyebrow">Total weekly SOV (current)</div>
+          <div class="verdict-value" id="verSOV">—</div>
+          <div class="verdict-detail" id="verSOVDetail">—</div>
         </div>
         <div class="verdict verdict-neutral">
-          <div class="verdict-eyebrow">Statistical Signal</div>
+          <div class="verdict-eyebrow">Statistical signal</div>
           <div class="verdict-value" id="verStat">—</div>
           <div class="verdict-detail" id="verStatDetail">—</div>
         </div>
       </div>
 
-      <!-- Operating-point banner: where the call centre actually runs vs. optimal -->
+      <!-- Operating-point banner: utilization gap -->
       <div class="opbar" id="opBar">
         <div class="opbar-head">
-          <div class="opbar-eyebrow">CURRENT OPERATING POINT</div>
+          <div class="opbar-eyebrow">CURRENT TOP-REP UTILIZATION</div>
           <div class="opbar-title" id="opTitle">—</div>
           <div class="opbar-sub" id="opSub">—</div>
         </div>
@@ -126,28 +128,21 @@
           </div>
           <div class="opbar-track">
             <div class="opbar-band opbar-band-opt" id="opBandOpt"></div>
-            <div class="opbar-band opbar-band-bad" id="opBandBad"></div>
             <div class="opbar-marker opbar-marker-current" id="opMarkerCurrent">
               <div class="opbar-marker-dot"></div>
               <div class="opbar-marker-label" id="opMarkerLabelCurrent">Current</div>
-            </div>
-            <div class="opbar-marker opbar-marker-median" id="opMarkerMedian">
-              <div class="opbar-marker-tick"></div>
-              <div class="opbar-marker-label opbar-marker-label-bottom" id="opMarkerLabelMedian">Long-term median</div>
             </div>
           </div>
         </div>
         <div class="opbar-foot" id="opFoot">—</div>
       </div>
 
-      <!-- MAIN CHART: scatter + smoothed curve + optimal/bad bands -->
+      <!-- PRIMARY CHART: Total weekly SOV vs rank-3-4 share -->
       <div class="chart-wrap">
         <div class="chart-head">
-          <h3>SOV response curve</h3>
+          <h3>Total weekly SOV vs rank 3–4 share</h3>
           <div class="legend">
-            <span class="lg"><i class="sw sw-opt"></i>Optimal band</span>
-            <span class="lg"><i class="sw sw-bad"></i>Bad region</span>
-            <span class="lg"><i class="sw sw-line"></i>Smoothed SOV</span>
+            <span class="lg"><i class="sw sw-line"></i>Smoothed total SOV</span>
             <span class="lg"><i class="sw sw-dot"></i>Weekly observation</span>
           </div>
         </div>
@@ -157,14 +152,26 @@
         <div class="chart-note" id="chartNote">—</div>
       </div>
 
-      <!-- Secondary: time series -->
+      <!-- PER-RANK PRODUCTIVITY TABLE -->
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>Productivity by rank tier</h3>
+          <div class="legend">
+            <span class="lg"><i class="sw sw-bar"></i>SOV per contacted lead</span>
+          </div>
+        </div>
+        <div class="rank-table" id="rankTable"></div>
+        <div class="chart-note" id="rankTableNote">Rank 1 = bottom quartile by trailing 10-week registrations within each language pool. Rank 4 = top quartile. SOV per contact is the durable per-call productivity advantage of higher-ranked reps.</div>
+      </div>
+
+      <!-- Secondary: time series + per-contact rate -->
       <div class="twin-grid">
         <div class="chart-wrap">
           <div class="chart-head">
             <h3>Weekly progression</h3>
             <div class="legend">
               <span class="lg"><i class="sw sw-share"></i>Rank 3–4 share</span>
-              <span class="lg"><i class="sw sw-sov"></i>SOV (10-wk smoothed)</span>
+              <span class="lg"><i class="sw sw-sov"></i>Total SOV (4-wk smoothed)</span>
             </div>
           </div>
           <div class="chart-box">
@@ -174,23 +181,23 @@
 
         <div class="chart-wrap">
           <div class="chart-head">
-            <h3>SOV by share bucket</h3>
+            <h3>SOV per contact vs share <span class="caveat-tag">mix-shift artifact</span></h3>
             <div class="legend">
-              <span class="lg"><i class="sw sw-bar"></i>Mean SOV</span>
-              <span class="lg"><i class="sw sw-empty"></i>No weeks observed</span>
+              <span class="lg"><i class="sw sw-line"></i>Smoothed SOV/contact</span>
+              <span class="lg"><i class="sw sw-dot"></i>Weekly observation</span>
             </div>
           </div>
           <div class="chart-box">
-            <canvas id="binChart"></canvas>
+            <canvas id="rateChart"></canvas>
           </div>
-          <div class="chart-note" id="binNote">—</div>
+          <div class="chart-note" id="rateNote">—</div>
         </div>
       </div>
 
       <!-- Daily scatter — every day as a point -->
       <div class="chart-wrap chart-wrap-full">
         <div class="chart-head">
-          <h3>Daily SOV vs. rank 3–4 share</h3>
+          <h3>Daily total SOV vs rank 3–4 share</h3>
           <div class="legend">
             <span class="lg"><i class="sw sw-dot-day"></i>One trading day</span>
             <span class="lg"><i class="sw sw-share"></i>Local trend (LOWESS)</span>
@@ -215,7 +222,7 @@
         <div class="chart-box chart-box-tall">
           <canvas id="monthlyChart"></canvas>
         </div>
-        <div class="chart-note" id="monthlyNote">Each month: stacked bars show how contacted leads were split between rank 1–2 and rank 3–4 reps; the line shows total SOV (ActualStatCRMCourseSOV + Upsales) earned that month.</div>
+        <div class="chart-note" id="monthlyNote">Each month: stacked bars show how contacted leads were split between rank 1–2 and rank 3–4 reps; the line shows total SOV (ActualStatCRMCourseSOV + Upsales) earned that month. Months with the highest top-rep share also tend to be the highest-SOV months.</div>
       </div>
 
       <!-- Narrative box -->
@@ -227,8 +234,8 @@
       <div class="panel-head">
         <div>
           <div class="panel-eyebrow">Cross-School Comparison</div>
-          <h2 class="panel-title">One chart, every school</h2>
-          <p class="panel-sub">How each school's SOV responds to rank 3–4 share — on a single axis.</p>
+          <h2 class="panel-title">Per-rank productivity, side by side</h2>
+          <p class="panel-sub">SOV per contacted lead by rank tier — the durable productivity gradient inside each school.</p>
         </div>
       </div>
       <div class="chart-wrap">
@@ -241,11 +248,11 @@
       <div class="matrix">
         <div class="matrix-head">
           <div>School</div>
-          <div>Optimal range</div>
-          <div>SOV turns bad</div>
-          <div>Trend</div>
-          <div>Signal strength</div>
-          <div>Weeks</div>
+          <div>Rank 4 SOV/contact</div>
+          <div>Rank 1 SOV/contact</div>
+          <div>R4 ÷ R1</div>
+          <div>R34 utilization</div>
+          <div>r34 share vs total SOV</div>
         </div>
         <div id="matrixBody"></div>
       </div>
@@ -256,39 +263,39 @@
       <div class="panel-head">
         <div>
           <div class="panel-eyebrow">Methodology</div>
-          <h2 class="panel-title">How the sweet spot was found</h2>
+          <h2 class="panel-title">How the productivity & utilization story was built</h2>
         </div>
       </div>
       <div class="method-grid">
         <div class="method-card">
           <div class="method-num">01</div>
           <h4>Causal rank join</h4>
-          <p>The rank file publishes a quartile rank (1 = low, 4 = top) every Sunday from the rep's prior 10 weeks of registrations. For every daily row in the Optimum file we attach the rank that was <em>known on that date</em> — the rank set on the most recent prior Sunday — so the join is strictly causal, with no forward-looking leak.</p>
+          <p>Ranks are published every Sunday from each rep's prior 10 weeks of registrations within their (school × language) pool. For every daily row we attach the rank that was <em>known on that date</em> — the rank set on the most recent prior Sunday. No forward-looking leak.</p>
         </div>
         <div class="method-card">
           <div class="method-num">02</div>
-          <h4>SOV alignment</h4>
-          <p>Daily rep-level SOV — defined as <span class="mono">ActualStatCRMCourseSOV + UpsalesAmount</span> — was weighted by Contacted volume, rolled up to a weekly call-center-wide figure, and smoothed on a 10-week trailing window to align with the rank window.</p>
+          <h4>SOV definition</h4>
+          <p>Daily rep-level SOV is <span class="mono">ActualStatCRMCourseSOV + UpsalesAmount</span>. Rolled up to weekly totals (the primary metric) and to a contacted-weighted per-contact rate (a diagnostic).</p>
         </div>
         <div class="method-card">
           <div class="method-num">03</div>
-          <h4>Curve fitting</h4>
-          <p>For each school we fit a Gaussian-kernel smoother over the rank-3–4 share × SOV pairs, with a quadratic reference to identify the peak and shape (monotonic vs inverted-U).</p>
+          <h4>Per-rank productivity</h4>
+          <p>For each rank tier we sum SOV and contacted leads across all rep-days, then divide. This is the rep-level productivity gradient — independent of who shows up which week.</p>
         </div>
         <div class="method-card">
           <div class="method-num">04</div>
-          <h4>Sweet spot</h4>
-          <p>Optimal range = smoothed SOV ≥ 97 % of peak. Bad threshold = share values where smoothed SOV drops below the call-center's 25th-percentile SOV (or the mid-point between peak and trough).</p>
+          <h4>Utilization</h4>
+          <p>Roster size = distinct reps observed at rank 3 or 4 over the full window. Current active = average distinct r3–4 reps active per week in the most recent 4 weeks. Utilization = active ÷ roster.</p>
         </div>
         <div class="method-card">
           <div class="method-num">05</div>
-          <h4>Significance</h4>
-          <p>Spearman ρ and Pearson r tested two-sided. A "strong" signal = |ρ| > 0.5 with p &lt; 0.01. "Directional" = 0.2 &lt; |ρ| ≤ 0.5. "Weak" = |ρ| ≤ 0.2. Categories with fewer than 10 weeks were excluded.</p>
+          <h4>Why total SOV, not the rate</h4>
+          <p>Total weekly SOV directly reflects revenue generated. The contacted-weighted per-contact rate is a ratio, and ratios are vulnerable to mix-shift: when more top reps show up, total contacts rise faster than SOV's marginal lift on those contacts, pulling the rate down even as the business is winning more. We show both, but only the total drives the narrative.</p>
         </div>
         <div class="method-card">
           <div class="method-num">06</div>
-          <h4>Caveats</h4>
-          <p>The rank share is driven by trailing volume — a 100 % reading often signals that rank 1–2 reps weren't active that week, not that top reps did more. Optimum recommendations should be read as "who is carrying the phone", not pure performance.</p>
+          <h4>Significance</h4>
+          <p>Spearman ρ tested two-sided. We test r34 share vs total SOV (the headline), r34 share vs SOV/contact rate (the artifact), and r34 reps active vs total SOV (the lever). Categories with fewer than 10 weeks were excluded.</p>
         </div>
       </div>
     </section>
@@ -296,7 +303,7 @@
   </main>
 
   <footer class="footer">
-    <div>Rank Lens · SOV Sweet-Spot Analysis</div>
+    <div>Rank Lens · Top-Rep Productivity & Utilization</div>
     <div>Data: Rank-Analysis & Rank-Optimum — rolled up to weekly × school</div>
   </footer>
 </div>

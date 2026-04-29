@@ -575,6 +575,106 @@ body{
   line-height: 1.55;
 }
 
+/* RANK TABLE */
+.rank-table{
+  display: grid;
+  grid-template-columns: 80px repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.rank-table .rt-head, .rank-table .rt-cell{
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+.rank-table .rt-head:last-child, .rank-table .rt-cell:last-child{ border-right: none; }
+.rank-table .rt-row:last-child .rt-cell{ border-bottom: none; }
+.rank-table .rt-row{ display: contents; }
+.rank-table .rt-head{
+  background: var(--line-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.rank-table .rt-rank{
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--line-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rank-table .rt-cell.rt-num{
+  font-family: var(--font-mono);
+  color: var(--ink);
+}
+.rank-table .rt-bar-wrap{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+.rank-table .rt-bar-track{
+  height: 8px;
+  background: var(--line-soft);
+  border-radius: 4px;
+  width: 100%;
+  overflow: hidden;
+  min-width: 0;
+}
+.rank-table .rt-bar{
+  height: 100%;
+  background: var(--ink);
+  border-radius: 4px;
+  min-width: 4px;
+}
+.rank-table .rt-bar-r1{ background: rgba(138,138,145,0.5); }
+.rank-table .rt-bar-r2{ background: rgba(138,138,145,0.75); }
+.rank-table .rt-bar-r3{ background: var(--ink); opacity: 0.85; }
+.rank-table .rt-bar-r4{ background: var(--ink); }
+.rank-table .rt-bar-val{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  min-width: 56px;
+  text-align: right;
+}
+
+/* Caveat tag (for mix-shift artifact label) */
+.caveat-tag{
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  background: var(--line-soft);
+  padding: 3px 7px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
+  font-weight: 500;
+}
+
+@media (max-width: 720px){
+  .rank-table{
+    grid-template-columns: 60px repeat(2, 1fr);
+    font-size: 12px;
+  }
+  .rank-table .rt-head:nth-child(n+4), .rank-table .rt-cell:nth-child(n+4){ display: none; }
+}
+
 /* FOOTER */
 .footer{
   display: flex;
