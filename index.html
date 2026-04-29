@@ -34,11 +34,11 @@
 
   <section class="hero">
     <div class="hero-label">Top-line finding</div>
-    <h1 class="hero-title">Rank-4 reps generate <span id="hero-ratio">1.6×</span> more revenue per contact, but most weeks only a fraction are active.</h1>
+    <h1 class="hero-title">Rank-4 reps generate <span id="hero-ratio">1.7×</span> more revenue per contact — but the active roster is sitting on real bench capacity.</h1>
     <p class="hero-lede">
       Activating bench rank-3/4 reps to a healthy weekly cadence is the single largest lever on SOV.
-      The current bench, if utilized at <strong>75%</strong> activation, would add an estimated
-      <strong id="hero-lift">$56k/week</strong> across the four cohorts — a <strong id="hero-pct">+72%</strong> lift on
+      The active bench (ex-employees excluded), if utilized at <strong>75%</strong> activation, would add an estimated
+      <strong id="hero-lift">+$24k/week</strong> across the four cohorts — a <strong id="hero-pct">+31%</strong> lift on
       the current <strong id="hero-current">$78k/week</strong> baseline.
     </p>
   </section>
@@ -149,6 +149,7 @@
       <li><strong>SOV definition.</strong> <code>ActualStatCRMCourseSOV + UpsalesAmount</code> per rep-week.</li>
       <li><strong>Rank source.</strong> <code>RankRegFromCalls</code>, joined per rep-week-language. Rank 1 = lowest, 4 = highest.</li>
       <li><strong>Cohorts.</strong> Hebrew Related and Biblical Related schools, split by rep <code>LanguageName</code> (English vs Spanish). Other languages excluded.</li>
+      <li><strong>Active roster only.</strong> Reps with "disabled" in their name are flagged as ex-employees and excluded from rosters, productivity, utilization, and the staffing list — so every metric reflects the people who can actually be deployed next week.</li>
       <li><strong>Bench definition.</strong> A rep is "bench" if they were active in fewer than <strong>50%</strong> of the last 8 weeks. The recommendation engine targets a <strong>75%</strong> activation rate.</li>
       <li><strong>Expected lift per rep.</strong> <code>(0.75 − recent_activation_rate) × avg_sov_when_active</code>. Reps need ≥ 4 historical active weeks to be recommended.</li>
       <li><strong>Cohort lift.</strong> Sum of the top 10 priority reps' individual lifts.</li>
