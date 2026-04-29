@@ -725,12 +725,19 @@ function renderCompare(){
           title: { display: true, text: "SOV per contacted lead", color: COLORS.inkMuted, font: { size: 11 } },
         },
       },
+      layout: { padding: { top: 8, right: 16, bottom: 4, left: 4 } },
       plugins: {
         legend: {
           display: true,
           position: 'top',
-          align: 'end',
-          labels: { boxWidth: 10, boxHeight: 10, color: COLORS.inkMuted, font: { size: 11, weight: '500' } },
+          align: 'center',
+          labels: {
+            boxWidth: 12, boxHeight: 12,
+            color: COLORS.inkMuted,
+            font: { size: 12, weight: '500' },
+            padding: 16,
+            usePointStyle: false,
+          },
         },
         tooltip: {
           callbacks: {
